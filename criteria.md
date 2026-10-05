@@ -28,7 +28,7 @@ tool calls and returns a fit card — in at least 4 of 5 tries.
 <!-- Why 4 of 5 and not 5 of 5? Something about your search, probably —
      "my search is a plain keyword match and some phrasings will miss" is a
      real answer. -->
-
+4 of 5 because search is a plain keyword match and a query can refer to a real listing and not match if the wording does not match the title, description, or tags.
 ---
 
 ## 2. An impossible query stops before the second tool
@@ -39,7 +39,7 @@ Given a query that matches no listings, the agent stops before calling
 **Why this target:**
 <!-- Why is 5 of 5 reasonable here when criterion 1 isn't? What's different
      about this path? -->
-
+5 of 5 is reasonable because this path checks an empty list. The same impossible query should stop before suggest_outfit every time, and the message should say what to change. Criterion 1 can miss on wording, but this one should come out the same on every try.
 ---
 
 ## 3. Something about state
@@ -54,10 +54,10 @@ Given a query that matches no listings, the agent stops before calling
      compares session["selected_item"] against what actually reached
      suggest_outfit is the shape you're after. -->
 
-
+In 5 of 5 runs where search returns at least one listing, the id in session["selected_item"] is the id passed into suggest_outfit.
 
 **Why this target:**
-
+I set 5 of 5 because the loop saves the first search result in session["selected_item"] and passes that same dict into suggest_outfit. We do not want any mismatched ids and a 4 of 5 or lower would tolerate errors
 
 
 ---
@@ -75,10 +75,10 @@ Given a query that matches no listings, the agent stops before calling
      sentence? A card longer than a caption anyone would post? Any of those can
      be turned into a number. -->
 
-
+For 5 different selected items, each fit card names that item's price and platform, and no two cards open with the same sentence.
 
 **Why this target:**
-
+Because config.py says a caption that reads the same for two different items is a template, and price and platform are fields on the listing that the caption is supposed to name, so those values stay put while the other words change.
 
 
 ---
@@ -92,11 +92,11 @@ Given a query that matches no listings, the agent stops before calling
      search respects a price ceiling — anything, as long as it names a number
      or an observable outcome. -->
 
-
+For a query that includes "under $30", every listing in session["search_results"] has price less than or equal to 30, in 5 of 5 tries.
 
 **Why this target:**
 
-
+I picked 5 of 5 because one listing over 30 means the filter failed. 4 of 5 could still pass with a price above 30 in the list.
 
 ---
 
