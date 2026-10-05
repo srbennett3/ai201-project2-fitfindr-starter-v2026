@@ -64,7 +64,7 @@ Search listings.json by keyword overlap with a description, then optional size a
 - **Inputs:** 
 Description (str), size (str/None), max_price (float/None).
 - **Returns:** 
-List of listing dicts, best match first, at most SEARCH_RESULT_LIMIT entries. Each dict keeps above fields.
+List of listing dicts: title, price, size, and platform, best match first, at most SEARCH_RESULT_LIMIT entries. Each dict keeps above fields.
 - **When it has nothing:**
 Return [] (empty list).
 
@@ -106,6 +106,7 @@ if outfit is empty or only whitespace, return a message
      function have to be real. -->
 
 **Branch rule:**
+If search_listings returns an empty list, put a message in the session and stop. Otherwise, take the first result and go to suggest_outfit.
 
 **Where it lives:** `agent.py::run_agent`
 
