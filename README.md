@@ -40,7 +40,7 @@
 ## What This Does
 
 <!-- Three or four sentences: what a user asks for, and what they get back. -->
-
+First, the user types a request, then the agent searches listings. When a hit is made, the agent picks one item and comes back with an outfit suggestion and a fit card.
 
 
 ---
@@ -59,24 +59,36 @@
 
 ### `search_listings`
 
-- **What it does:**
-- **Inputs:** <!-- name and type each: `max_price` (float), not "a price" -->
-- **Returns:**
+- **What it does:** 
+Search listings.json by keyword overlap with a description, then optional size and price filters.
+- **Inputs:** 
+Description (str), size (str/None), max_price (float/None).
+- **Returns:** 
+List of listing dicts, best match first, at most SEARCH_RESULT_LIMIT entries. Each dict keeps above fields.
 - **When it has nothing:**
+Return [] (empty list).
 
 ### `suggest_outfit`
 
-- **What it does:**
+- **What it does:** 
+One model call that suggests one or two outfits for a listing plus the user's wardrobe.
 - **Inputs:**
+new_item(dict, one_listing), wardrobe(dict with an items list, maybe empty)
 - **Returns:**
+a non-empty str
 - **When it has nothing:**
+if wardrobe["items"] is empty, still returns a stringof general styling advice.
 
 ### `create_fit_card`
 
 - **What it does:**
+One model call that writes a 2-4 sentence post caption.
 - **Inputs:**
+outfit(str), new_item(dict).
 - **Returns:**
+a str caption that names each item, its price, and its platform
 - **When it has nothing:**
+if outfit is empty or only whitespace, return a message
 
 ---
 
