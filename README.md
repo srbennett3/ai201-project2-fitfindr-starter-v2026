@@ -40,7 +40,7 @@
 ## What This Does
 
 <!-- Three or four sentences: what a user asks for, and what they get back. -->
-First, the user types a request, then the agent searches listings. When a hit is made, the agent picks one item and comes back with an outfit suggestion and a fit card.
+First, the user types a request, then the agent searches listings. If something matches, it takes the first item and comes back with an outfit and a fit card. The card names the item, the price, and the platform. If nothing matches, it stops and says what to change.
 
 
 ---
@@ -112,7 +112,7 @@ If search_listings returns an empty list, put a message in the session and stop.
 
 **How the query is parsed:** Regex. `under $N` becomes max_price, `size X` becomes size, and the remaining words are the description.
 
-**What moves through the session:** parsed, then search_results, then selected_item (the first result), then outfit_suggestion from that item and the wardrobe, then fit_card from the outfit and the selected item. An empty search sets error and leaves selected_item, outfit_suggestion, and fit_card as None.
+**What moves through the session:** parsed goes in first, then search_results. The first hit becomes selected_item. suggest_outfit gets that same item and the wardrobe. create_fit_card gets the outfit string and the item, and the caption goes in fit_card. If search_results is [], error gets the message and the later fields stay None.
 
 ---
 
@@ -185,15 +185,15 @@ Nothing beats that perfectly broken-in denim feel. Grabbed these vintage Levi's 
 
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I asked for search_listings to filter on description, size, and max price. If nothing matches, return [].
+- *What came back:* search_listings was defined twice. The helpers were inside the first copy, and import re was missing. Running it raised NameError.
+- *What I changed:* I kept one search_listings and put the helpers above it. I added import re. No match still returns [].
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I asked to fill in run_agent. An empty search should stop. A hit should save the item on the session, then call suggest_outfit and create_fit_card from there.
+- *What came back:* The empty message was one long line made from the description, the size, and the price. check_iterations also ran before every step.
+- *What I changed:* The message is one sentence now. It says to try different words, a different size, or a higher price. suggest_outfit and create_fit_card read selected_item and the wardrobe from the session.
 
 <!-- ═══════════════════════ UNIT 4 — THE TEST ═══════════════════════
 
