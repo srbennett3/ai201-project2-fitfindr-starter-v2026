@@ -110,9 +110,9 @@ If search_listings returns an empty list, put a message in the session and stop.
 
 **Where it lives:** `agent.py::run_agent`
 
-**How the query is parsed:** <!-- regex, string splitting, or asking the model — say which -->
+**How the query is parsed:** Regex. `under $N` becomes max_price, `size X` becomes size, and the remaining words are the description.
 
-**What moves through the session:** <!-- which fields, in what order -->
+**What moves through the session:** parsed, then search_results, then selected_item (the first result), then outfit_suggestion from that item and the wardrobe, then fit_card from the outfit and the selected item. An empty search sets error and leaves selected_item, outfit_suggestion, and fit_card as None.
 
 ---
 
@@ -126,8 +126,27 @@ If search_listings returns an empty list, put a message in the session and stop.
 **One full query**
 
 ```
-$ python app.py ask '...'
+$ python app.py ask 'looking for a vintage graphic tee under $30'
 
+  Found:    Y2K Baby Tee — Butterfly Print — $18.0 on depop
+
+  Outfit:   **Outfit 1:**
+- Y2K Baby Tee — Butterfly Print
+- Baggy straight-leg jeans, dark wash
+- Vintage black denim jacket
+- Chunky white sneakers
+- Black crossbody bag
+
+**Outfit 2:**
+- Y2K Baby Tee — Butterfly Print
+- Wide-leg khaki trousers
+- Brown leather belt
+- Black combat boots
+- Black crossbody bag
+
+  Fit card: Scored the ultimate piece for my Y2K rotation. Paired this butterfly print baby tee with dark denim and chunky sneakers for pure 2000s mall-rat energy, though it looks just as good with khaki trousers and combat boots. Snagged it on depop for $18.0 and I’m genuinely obsessed.
+
+0 model calls this session, 2 served from cache
 ```
 
 **The three tools, tested one at a time**

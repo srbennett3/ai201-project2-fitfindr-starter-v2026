@@ -13,6 +13,8 @@ Build and test your three tools in `tools.py` first. Then come here.
     python agent.py          runs both example paths below
 """
 
+import re
+
 import config
 import trace
 from tools import search_listings, suggest_outfit, create_fit_card
@@ -107,8 +109,49 @@ def run_agent(query: str, wardrobe: dict) -> dict:
     """
     session = new_session(query, wardrobe)
 
-    # TODO: delete these two lines and build the loop.
-    session["error"] = "The planning loop isn't built yet — see the TODO in agent.py."
+    count = 1
+    trace.check_iterations(count)
+
+    text = query.lower()
+    price_match = re.search(r"under \$(\d+)", text)
+    size_match = re.search(r"size (\w+)", text)
+    description = text
+    if price_match:
+        description = description.replace(price_match.group(0), "")
+    if size_match:
+        description = description.replace(size_match.group(0), "")
+    description = description.strip()
+    max_price = None
+    size = None
+    if price_match:
+        max_price = float(price_match.group(1))
+    if size_match:
+        size = size_match.group(1)
+    session["parsed"] = {
+        "description": description,
+        "size": size,
+        "max_price": max_price,
+    }
+
+    session["search_results"] = search_listings(
+        session["parsed"]["description"],
+        size=session["parsed"]["size"],
+        max_price=session["parsed"]["max_price"],
+    )
+
+    if session["search_results"] == []:
+        session["error"] = "Nothing matched. Try different words, a different size, or a higher price."
+        return session
+
+    session["selected_item"] = session["search_results"][0]
+    session["outfit_suggestion"] = suggest_outfit(
+        session["selected_item"],
+        session["wardrobe"],
+    )
+    session["fit_card"] = create_fit_card(
+        session["outfit_suggestion"],
+        session["selected_item"],
+    )
     return session
 
 
