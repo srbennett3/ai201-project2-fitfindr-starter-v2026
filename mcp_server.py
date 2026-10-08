@@ -39,14 +39,12 @@ Then point your agent at it. In `run_agent()`, swap the direct call:
     results = search_listings(description, size, max_price)
 
 for the MCP one:
-
-    from mcp_client import call_tool
-    results = call_tool("search_listings", {
-        "description": description,
-        "size": size,
-        "max_price": max_price,
-    })
-
+from mcp_client import call_tool
+results = call_tool("search_listings", {
+    "description": description,
+    "size": size,
+    "max_price": max_price,
+})
 **What comes back should not change.** If it does, that difference is your
 first clue about what your tool was really returning before.
 
@@ -69,21 +67,21 @@ mcp = FastMCP("fitfindr", log_level="WARNING")
 
 # ── TODO: uncomment and fill this in ──────────────────────────────────────────
 #
-# @mcp.tool()
-# def search_listings(
-#     description: str,
-#     size: str | None = None,
-#     max_price: float | None = None,
-# ) -> list[dict]:
-#     """
-#     <-- YOUR DESCRIPTION GOES HERE.
-#
-#         One or two sentences. What does this tool do, what does it need, and
-#         what does it give back when it finds nothing? Written for a reader
-#         who cannot see the code.
-#     """
-#     return _search_listings_impl(description, size, max_price)
-#
+@mcp.tool()
+def search_listings(
+     description: str,
+     size: str | None = None,
+     max_price: float | None = None,
+ ) -> list[dict]:
+     """
+     Search thrift listings by keyword overlap with a description. 
+     Size is an optional string, for example "M". 
+     Max_price is an optional ceiling in whole dollars, and a listing at that exact price still matches. 
+     Leave either of those out to skip that filter. 
+     Returns the matching listing dicts, best match first, or an empty list when nothing matches.
+     """
+     return _search_listings_impl(description, size, max_price)
+
 # ──────────────────────────────────────────────────────────────────────────────
 #
 # Two notes on the block above.
