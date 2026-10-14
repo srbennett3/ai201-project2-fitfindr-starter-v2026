@@ -406,23 +406,24 @@ run_agent now calls call_tool and the return value stayed a list.
      `python run_eval.py --label after` -->
 
 **What I changed:**
+I added a revision under criterion 1. For the query "vintage graphic tee under $30", the target is 5 of 5, and the original 4 of 5 line stays in criteria.md. tools.py and agent.py are the same.
 
 **Which failure it was meant to fix:**
+There was no failure. The before tries were already 5 of 5, and 4 of 5 was the low target because search_listings is a plain keyword match.
 
 ### Run Log — After
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |  |  |
+| 1. A matching query completes all three tools | 5 of 5 | PASS | FAIL | FAIL | FAIL | PASS | MISSED (2/5) |
+| 2. An impossible query stops before the second tool | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 3. Selected item id matches the id passed into suggest_outfit | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 4. Five fit cards name price and platform, and no two open with the same sentence | 5 of 5 | FAIL | PASS | PASS | FAIL | PASS | MISSED (4/5) |
+| 5. Under $30 keeps every result price at or below 30 | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
 
 **Did it help, and how do I know:**
 
-<!-- If it made things worse, say that. Honestly reported, that earns full
-     credit and is more interesting than one that worked. -->
+It made the verdicts worse. The before run was MET on every row. Criterion 1 is now MISSED (2/5), and criterion 4 is MISSED (4/5). Both misses were due to an error from the model, not the criterion 1 target change.
 
 
 
@@ -430,9 +431,9 @@ run_agent now calls call_tool and the return value stayed a list.
 
 ## What's Still Broken
 
-<!-- For each criterion still missed: what you'd do, and why you stopped where
-     you did. "I ran out of time" is fine if it's true. Pretending nothing is
-     left is not. -->
+Criterion 1 passed 2/5 tries and criterion 4 passed 4/5. The failed tries returned 503 UNAVAILABLE. generate.py retries a 429 and raises ModelUnavailable. I would retry a 503 the same way generate.py already retries a 429, then run the eval again. I stopped after the criterion 1 target change.
+
+search_listings is still a plain keyword match, so other wording can miss the title, description, or tags. That did not miss a criterion on this run.
 
 
 

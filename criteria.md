@@ -29,6 +29,10 @@ tool calls and returns a fit card — in at least 4 of 5 tries.
      "my search is a plain keyword match and some phrasings will miss" is a
      real answer. -->
 4 of 5 because search is a plain keyword match and a query can refer to a real listing and not match if the wording does not match the title, description, or tags.
+
+Revised in unit 4: Given the query "vintage graphic tee under $30", the agent completes all three tool calls and returns a fit card in 5 of 5 tries.
+
+Why revised: The before run was 5 of 5 on "vintage graphic tee under $30". The 4 of 5 target was for a plain keyword match, where other wording can miss the title, description, or tags. This query hit every time, so the target was changed to 5 of 5.
 ---
 
 ## 2. An impossible query stops before the second tool
