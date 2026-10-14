@@ -277,21 +277,39 @@ that produced it:
 **Happy path**
 
 ```
-
+python app.py ask 'vintage graphic tee under $30' --trace
+[1] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: 10 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +7 more
+[2] suggest_outfit
+      in:  dict with keys: new_item, wardrobe
+      out: **Outfit 1:** - Y2K Baby Tee — Butterfly Print - Baggy straight-leg jeans, dark wash - Vintage black denim jac…
+[3] create_fit_card
+      in:  dict with keys: outfit, new_item
+      out: Scored the ultimate piece for my Y2K rotation. Paired this butterfly print baby tee with dark denim and chunky…
 ```
 
 **Empty search**
 
 ```
+python app.py ask 'designer jeans size XXS under $5' --trace
+[1] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: [] (empty)
+      →    branch: empty, stopping
 
+  Nothing matched. Try different words, a different size, or a higher price.
+
+0 model calls this session
 ```
 
 **On the MCP move:** <!-- what changed in your code, and whether anything
 behaved differently afterwards. If the rewire didn't work, say exactly where it
 broke — the error text and the last thing that worked. That earns the point in
 full. -->
-
-
+```
+run_agent now calls call_tool and the return value stayed a list.
+```
 
 ---
 

@@ -133,25 +133,64 @@ def run_agent(query: str, wardrobe: dict) -> dict:
         "max_price": max_price,
     }
 
+    # Search listings over MCP and record what came back.
     session["search_results"] = call_tool("search_listings", {
         "description": description,
         "size": size,
         "max_price": max_price,
     })
+    note = ""
+    if session["search_results"] == []:
+        note = "branch: empty, stopping"
+    trace.step(
+        "search_listings (via MCP)",
+        inputs={
+            "description": description,
+            "size": size,
+            "max_price": max_price,
+        },
+        returned=session["search_results"],
+        note=note,
+    )
 
+    # Stop when the search list is empty and say what to change.
     if session["search_results"] == []:
         session["error"] = "Nothing matched. Try different words, a different size, or a higher price."
         return session
 
+    # Save the first listing for the next tool.
     session["selected_item"] = session["search_results"][0]
-    session["outfit_suggestion"] = suggest_outfit(
-        session["selected_item"],
-        session["wardrobe"],
-    )
-    session["fit_card"] = create_fit_card(
-        session["outfit_suggestion"],
-        session["selected_item"],
-    )
+    try:
+        # Suggest an outfit and record that step.
+        session["outfit_suggestion"] = suggest_outfit(
+            session["selected_item"],
+            session["wardrobe"],
+        )
+        trace.step(
+            "suggest_outfit",
+            inputs={
+                "new_item": session["selected_item"],
+                "wardrobe": session["wardrobe"],
+            },
+            returned=session["outfit_suggestion"],
+        )
+        # Write the fit card and record that step.
+        session["fit_card"] = create_fit_card(
+            session["outfit_suggestion"],
+            session["selected_item"],
+        )
+        trace.step(
+            "create_fit_card",
+            inputs={
+                "outfit": session["outfit_suggestion"],
+                "new_item": session["selected_item"],
+            },
+            returned=session["fit_card"],
+        )
+    except ModelUnavailable as error:
+        # Save the message that the model could not be reached, then stop.
+        session["error"] = str(error)
+        return session
     return session
 
 
