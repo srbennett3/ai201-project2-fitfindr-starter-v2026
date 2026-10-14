@@ -332,13 +332,16 @@ Criterion 5, try 1. From "under 30 prices", line 1869. Produced by run_eval.py::
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | A matching query completes all three tools and returns a fit card | 4 of 5 | MET | All 5 tries called search_listings, suggest_outfit, and create_fit_card and returned a fit card. 5 of 5 meets 4 of 5. |
+| 2 | An impossible query stops before suggest_outfit and names what to change | 5 of 5 | MET | All 5 tries stopped after search_listings and returned "Nothing matched. Try different words, a different size, or a higher price." |
+| 3 | The id in session["selected_item"] is the id passed into suggest_outfit | 5 of 5 | MET | All 5 tries saved lst_008 and passed lst_008 into suggest_outfit. |
+| 4 | For 5 different items, each fit card names that item's price and platform, and no two cards open with the same sentence | 5 of 5 | MET | On each of the 5 tries, all five cards name that item's price and platform, and the five opening sentences are different. |
+| 5 | For a query that includes "under $30", every price in session["search_results"] is less than or equal to 30 | 5 of 5 | MET | All 5 tries kept every result price at or below 30. The highest price in each try is 30.0. |
+
 
 **Diagnoses**
+
+No criterion was missed. Criteria 2, 3, and 5 ask for 5 of 5, and those tries came out the same every time. Criterion 1 is the low target. I set 4 of 5 because search_listings is a plain keyword match, and a query can name a real listing and still miss the title, description, or tags. These five tries used "vintage graphic tee under $30", and that wording hit every time. I would tighten criterion 1 to 5 of 5 on this query.
 
 
 
