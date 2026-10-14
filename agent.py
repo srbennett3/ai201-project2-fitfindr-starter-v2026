@@ -166,6 +166,7 @@ def run_agent(query: str, wardrobe: dict) -> dict:
             session["selected_item"],
             session["wardrobe"],
         )
+        # Record the id passed into suggest_outfit.
         trace.step(
             "suggest_outfit",
             inputs={
@@ -173,6 +174,7 @@ def run_agent(query: str, wardrobe: dict) -> dict:
                 "wardrobe": session["wardrobe"],
             },
             returned=session["outfit_suggestion"],
+            note="passed id " + session["selected_item"]["id"],
         )
         # Write the fit card and record that step.
         session["fit_card"] = create_fit_card(

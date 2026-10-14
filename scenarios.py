@@ -35,18 +35,51 @@ SCENARIOS = [
         "wardrobe": "empty",
         "criterion": None,
     },
-    # TODO: add what your criteria 3, 4 and 5 need.
-    #
-    # Set "criterion" to the number in criteria.md that the scenario tests.
-    # "criterion": None means a diagnostic run — useful to have, but it isn't
-    # one of your five, and run_eval.py marks it as such in the table.
-    #
-    # For a state criterion, any normal query works — what you're checking is
-    # what ends up in the session, not what the user typed.
-    #
-    # For a fit-card criterion, you probably want the SAME query listed more
-    # than once, or several different items, depending on what your criterion
-    # actually says.
+        # Run a matching query so the selected id can be checked against the id passed on.
+    {
+        "name": "selected id matches passed id",
+        "query": "chunky brown knit cardigan",
+        "wardrobe": "example",
+        "criterion": 3,
+    },
+    # Run five different items so each fit card can be checked.
+    {
+        "name": "fit card flannel",
+        "query": "flannel shirt",
+        "wardrobe": "example",
+        "criterion": 4,
+    },
+    {
+        "name": "fit card mary janes",
+        "query": "platform mary janes",
+        "wardrobe": "example",
+        "criterion": 4,
+    },
+    {
+        "name": "fit card bucket hat",
+        "query": "bucket hat",
+        "wardrobe": "example",
+        "criterion": 4,
+    },
+    {
+        "name": "fit card chelsea boots",
+        "query": "suede chelsea boots",
+        "wardrobe": "example",
+        "criterion": 4,
+    },
+    {
+        "name": "fit card silk dress",
+        "query": "silk slip dress",
+        "wardrobe": "example",
+        "criterion": 4,
+    },
+    # Run a query that says under $30 so each result price can be checked.
+    {
+        "name": "under 30 prices",
+        "query": "vintage under $30",
+        "wardrobe": "example",
+        "criterion": 5,
+    },
 ]
 
 WARDROBES = ("example", "empty")

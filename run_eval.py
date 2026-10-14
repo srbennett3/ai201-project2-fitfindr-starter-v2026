@@ -186,10 +186,16 @@ def write_report(rows, args):
 
             session = record["session"] or {}
             item = session.get("selected_item") or {}
+            # Record the selected id and each result price.
+            prices = []
+            for hit in session.get("search_results") or []:
+                prices.append(str(hit.get("price")))
             lines += [
                 f"- stopped early: {'yes — ' + str(session.get('error')) if session.get('error') else 'no'}",
                 f"- selected_item: {item.get('title', '(none)')}"
                 + (f" (${item.get('price')}, {item.get('platform')})" if item else ""),
+                f"- selected_item id: {item.get('id', '(none)')}",
+                "- search result prices: " + ", ".join(prices),
                 f"- search_results: {len(session.get('search_results') or [])}",
                 "",
             ]

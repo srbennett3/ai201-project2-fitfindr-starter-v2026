@@ -215,18 +215,100 @@ Nothing beats that perfectly broken-in denim feel. Grabbed these vintage Levi's 
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |  |  |
+| 1. A matching query completes all three tools | 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 2. An impossible query stops before the second tool | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 3. Selected item id matches the id passed into suggest_outfit | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 4. Five fit cards name price and platform, and no two open with the same sentence | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 5. Under $30 keeps every result price at or below 30 | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
 
 **Real output from one try**, pasted as text, naming the file and function
 that produced it:
 
-```
+Criterion 1, try 1.
 
-```
+- stopped early: no
+- selected_item: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+- selected_item id: lst_002
+- search result prices: 18.0, 24.0, 19.0, 26.0, 15.0, 22.0, 27.0, 20.0, 30.0, 12.0
+- search_results: 10
+
+Outfit suggestion:
+
+Outfit 1: Pair the Y2K baby tee with the baggy straight-leg jeans, black combat boots, black cropped zip hoodie, and black crossbody bag.
+
+Outfit 2: Style the Y2K baby tee with the wide-leg khaki trousers, brown leather belt, chunky white sneakers, and vintage black denim jacket.
+
+Fit card:
+
+Found this little butterfly print Y2K baby tee rummaging through the racks and honestly, I'm obsessed. It’s giving total early-2000s mall goth energy when you pair it with baggy straight-leg jeans, a cropped zip hoodie, and beat-up combat boots. Grabbed it on depop for $18.0 and I already know it’s going to be on heavy rotation.
+
+Trace:
+
+[1] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: 10 items: Y2K Baby Tee — Butterfly Print, Graphic Tee — 2003 Tour Bootleg Style, Vintage Band Tee — Faded Grey … +7 more
+[2] suggest_outfit
+      in:  dict with keys: new_item, wardrobe
+      out: Outfit 1: Pair the Y2K baby tee with the baggy straight-leg jeans, black combat boots, black cropped zip hoodi…
+      →    passed id lst_002
+[3] create_fit_card
+      in:  dict with keys: outfit, new_item
+      out: Found this little butterfly print Y2K baby tee rummaging through the racks and honestly, I'm obsessed. It’s gi…
+
+
+Criterion 2, try 1.
+
+- stopped early: yes — Nothing matched. Try different words, a different size, or a higher price.
+- selected_item: (none)
+- selected_item id: (none)
+- search result prices: 
+- search_results: 0
+
+Trace:
+
+[1] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: [] (empty)
+      →    branch: empty, stopping
+
+
+Criterion 3, try 1. From results/run_2026-10-14_0046_before.md, "selected id matches passed id", lines 533–576. Produced by run_eval.py::write_report.
+
+- selected_item: Knit Cardigan — Chunky Brown ($35.0, depop)
+- selected_item id: lst_008
+
+[2] suggest_outfit
+      in:  dict with keys: new_item, wardrobe
+      →    passed id lst_008
+
+
+Criterion 4. One fit card from each of the five items. Produced by tools.py::create_fit_card, logged by run_eval.py::write_report.
+
+Flannel, line 778 and lines 801–803:
+- selected_item: Oversized Flannel Shirt — Plaid Red/Black ($22.0, thredUp)
+Scored this absolute unit of a red and black Oversized Flannel Shirt on thredUp for $22.0, and it’s basically my new uniform. Giving major 90s grunge coffee shop poetry vibes when worn open over a ribbed tank, but equally ready for a moody autumn campus stroll layered under a grey crewneck. It’s got that heavy, lived-in softness you usually have to dig through bins for hours to find.
+
+Mary Janes, line 990 and lines 1014–1016:
+- selected_item: Platform Mary Janes — Black Patent ($55.0, depop)
+I’ve been hunting for the ultimate chunky ’90s shoe for months and these Platform Mary Janes finally ended the search. They add the exact right amount of glossy grunge to a baggy denim and white tank combo, but look just as good dialed back with khakis and a zip hoodie. Snagged them for $55.0 on depop and my fall wardrobe is officially complete.
+
+Bucket hat, line 1197 and lines 1223–1225:
+- selected_item: Bucket Hat — Reversible, Brown Plaid ($14.0, thredUp)
+Found my new emotional support headwear. This reversible brown plaid bucket hat from thredUp was only $14.0 and literally ties together every 90s indie-sleaze and normcore look I've been trying to pull off. It goes from low-key solid tan to full grunge plaid depending on whether I'm leaning into crisp khaki minimalism or throwing on an oversized grey crewneck and combat boots.
+
+Chelsea boots, line 1445 and lines 1471–1473:
+- selected_item: Suede Chelsea Boots — Tan ($44.0, poshmark)
+Scored these tan suede Chelsea boots and I’m already obsessed with how buttery the leather looks. Threw them on with baggy dark denim and an oversized grey crewneck for that effortless, slouchy silhouette, but they’re just as good with wide-leg khakis. Snagged them for $44.0 on poshmark and my fall wardrobe has officially peaked.
+
+Silk dress, line 1677 and lines 1692–1694:
+- selected_item: 90s Silk Slip Dress — Floral, Midi Length ($30.0, depop)
+Stumbled upon this absolute gem and couldn't pass it up. I’m picturing this floral 90s silk slip dress layered right over baggy dark denim with an oversized crewneck for that ultimate grungy, effortless look. Grabbed it on depop for $30.0 and I'm honestly obsessed.
+
+
+Criterion 5, try 1. From "under 30 prices", line 1869. Produced by run_eval.py::write_report.
+
+- search result prices: 18.0, 22.0, 24.0, 20.0, 30.0, 12.0, 26.0, 24.0, 16.0, 29.0
+
 
 ---
 
