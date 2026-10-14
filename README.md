@@ -195,6 +195,12 @@ Nothing beats that perfectly broken-in denim feel. Grabbed these vintage Levi's 
 - *What came back:* The empty message was one long line made from the description, the size, and the price. check_iterations also ran before every step.
 - *What I changed:* The message is one sentence now. It says to try different words, a different size, or a higher price. suggest_outfit and create_fit_card read selected_item and the wardrobe from the session.
 
+**Moment 3**
+
+- *What I asked for:* I asked for help classifying the output in results/run_2026-10-14_0046_before.md against criteria.md as PASS or FAIL.
+- *What came back:* A list of all the runs and the result along with a short explanation
+- *What I changed:* I used it as a way to check my initial thoughts and actually caught a mistake made misrecording one of the criteria 3 runs.
+
 <!-- ═══════════════════════ UNIT 4 — THE TEST ═══════════════════════
 
      Don't fill these in during unit 3.
@@ -388,10 +394,8 @@ python app.py ask 'designer jeans size XXS under $5' --trace
 0 model calls this session
 ```
 
-**On the MCP move:** <!-- what changed in your code, and whether anything
-behaved differently afterwards. If the rewire didn't work, say exactly where it
-broke — the error text and the last thing that worked. That earns the point in
-full. -->
+**On the MCP move:** I registered search_listings in mcp_server.py and pointed it at the function in tools.py. In agent.py::run_agent the search step calls call_tool("search_listings", ...) with description, size, and max_price. The return stayed a list of dicts, or [] when nothing matches. On the before log a matching query still runs all three tools, and an empty search still stops after that one call.
+
 ```
 run_agent now calls call_tool and the return value stayed a list.
 ```
@@ -417,13 +421,13 @@ There was no failure. The before tries were already 5 of 5, and 4 of 5 was the l
 |---|---|---|---|---|---|---|---|
 | 1. A matching query completes all three tools | 5 of 5 | PASS | FAIL | FAIL | FAIL | PASS | MISSED (2/5) |
 | 2. An impossible query stops before the second tool | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
-| 3. Selected item id matches the id passed into suggest_outfit | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 3. Selected item id matches the id passed into suggest_outfit | 5 of 5 | PASS | PASS | FAIL | PASS | PASS | MISSED (4/5) |
 | 4. Five fit cards name price and platform, and no two open with the same sentence | 5 of 5 | FAIL | PASS | PASS | FAIL | PASS | MISSED (4/5) |
 | 5. Under $30 keeps every result price at or below 30 | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
 
 **Did it help, and how do I know:**
 
-It made the verdicts worse. The before run was MET on every row. Criterion 1 is now MISSED (2/5), and criterion 4 is MISSED (4/5). Both misses were due to an error from the model, not the criterion 1 target change.
+It made the verdicts worse. The before run was MET on every row. Criterion 1 is now MISSED (2/5), criterion 3 is MISSED (4/5), and criterion 4 is MISSED (4/5). To be fair, those missed tries returned 503 UNAVAILABLE. Criterion 1, tries 2–4, and criterion 3, try 3, stopped after search_listings. Criterion 3, try 3 saved lst_008 and never called suggest_outfit. Criterion 4, try 4 called suggest_outfit for the flannel and stopped before create_fit_card.
 
 
 
@@ -431,7 +435,7 @@ It made the verdicts worse. The before run was MET on every row. Criterion 1 is 
 
 ## What's Still Broken
 
-Criterion 1 passed 2/5 tries and criterion 4 passed 4/5. The failed tries returned 503 UNAVAILABLE. generate.py retries a 429 and raises ModelUnavailable. I would retry a 503 the same way generate.py already retries a 429, then run the eval again. I stopped after the criterion 1 target change.
+Criterion 1 passed 2 of 5, criterion 3 passed 4 of 5, and criterion 4 passed 4 of 5. The failed tries returned 503 UNAVAILABLE. generate.py retries a 429 and raises ModelUnavailable on anything else, including a 503. I would retry a 503 the same way, then run the eval again. I stopped after the criterion 1 target change.
 
 search_listings is still a plain keyword match, so other wording can miss the title, description, or tags. That did not miss a criterion on this run.
 
